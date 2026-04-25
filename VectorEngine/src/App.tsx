@@ -2,14 +2,17 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import Gallery from './screens/Gallery';
 import Editor from './screens/Editor';
+import RasterLab from './screens/RasterLab';
 import './index.css';
 
 function App() {
   return (
+
     <BrowserRouter>
       <div className="bg-black min-h-screen">
         <AnimatePresence mode="wait">
           <Routes>
+            <Route path="/raster" element={<RasterLab />} />
             <Route
               path="/"
               element={

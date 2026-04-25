@@ -42,38 +42,65 @@ export default function Gallery() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span style={{ color: '#ffffff', fontSize: '18px', fontWeight: '600' }}>
-            Лабораторная работа №2
+            Лабораторная работа
           </span>
         </div>
-        
-        <button
-          onClick={addProject}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            backgroundColor: '#3b82f6',
-            color: '#ffffff',
-            border: 'none',
-            padding: '8px 20px',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: '500',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#2563eb';
-            e.currentTarget.style.transform = 'scale(1.02)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#3b82f6';
-            e.currentTarget.style.transform = 'scale(1)';
-          }}
-        >
-          <Plus size={18} />
-          Создать проект
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          
+          <Link
+            to="/raster"
+            style={{ textDecoration: 'none' }}
+          >
+            <button
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                backgroundColor: '#3b82f6',
+                color: '#ffffff',
+                border: 'none',
+                padding: '8px 20px',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: 'pointer',
+              }}
+            >
+              <LayoutGrid size={18} />
+              Растризатор
+            </button>
+          </Link>
+
+          <button
+            onClick={addProject}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              backgroundColor: '#3b82f6',
+              color: '#ffffff',
+              border: 'none',
+              padding: '8px 20px',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#2563eb';
+              e.currentTarget.style.transform = 'scale(1.02)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#3b82f6';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            <Plus size={18} />
+            Создать проект
+          </button>
+
+        </div>
       </header>
 
       <div style={{ flex: 1, overflow: 'auto', padding: '32px' }}>
