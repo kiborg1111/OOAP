@@ -13,7 +13,6 @@ function App() {
       <div className="bg-black min-h-screen">
         <AnimatePresence mode="wait">
           <Routes>
-            {/* Главная страница */}
             <Route
               path="/"
               element={
@@ -27,8 +26,6 @@ function App() {
                 </motion.div>
               }
             />
-
-            {/* Редактор проектов */}
             <Route
               path="/editor/:id"
               element={
@@ -42,11 +39,8 @@ function App() {
                 </motion.div>
               }
             />
-
-            {/* ЛР 4 — Растризатор */}
             <Route path="/raster" element={<RasterLab />} />
 
-            {/* ЛР 5 — Система фигур */}
             <Route path="/shapes" element={<RasterLab1 />} />
 
           </Routes>
