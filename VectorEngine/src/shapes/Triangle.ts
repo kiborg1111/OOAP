@@ -3,15 +3,21 @@ import { Bounds, Point } from '../core/types';
 import { RasterRenderer } from '../lib/raster/RasterRenderer';
 
 export class Triangle extends Shape {
-  public x1: number = -70;
-  public y1: number = -65;
-  public x2: number = 70;
-  public y2: number = -65;
-  public x3: number = 0;
-  public y3: number = 75;
+  public x1: number;
+  public y1: number;
+  public x2: number;
+  public y2: number;
+  public x3: number;
+  public y3: number;
 
-  constructor(id?: string) {
+  constructor(x1 = -70, y1 = -65, x2 = 70, y2 = -65, x3 = 0, y3 = 75, id?: string) {
     super(id);
+    this.x1 = x1;
+    this.y1 = y1;
+    this.x2 = x2;
+    this.y2 = y2;
+    this.x3 = x3;
+    this.y3 = y3;
     this.strokeWidth = 5;
   }
 
@@ -32,16 +38,12 @@ export class Triangle extends Shape {
     const points: Point[] = [p1, p2, p3];
 
     const fillColor = {
-      r: 59,
-      g: 130,
-      b: 246,
+      r: 59, g: 130, b: 246,
       a: Math.floor(this.fillOpacity * 255)
     };
 
     const strokeColor = {
-      r: 30,
-      g: 64,
-      b: 175,
+      r: 30, g: 64, b: 175,
       a: Math.floor(this.strokeOpacity * 255)
     };
 
@@ -52,7 +54,19 @@ export class Triangle extends Shape {
   hitTest(screenX: number, screenY: number): boolean {
     const local = this.transformPointToLocal(screenX, screenY);
     const b = this.getLocalBounds();
-    return local.x >= b.minX - 20 && local.x <= b.maxX + 20 &&
-           local.y >= b.minY - 20 && local.y <= b.maxY + 20;
+
+    return local.x >= b.minX - 15 && local.x <= b.maxX + 15 &&
+           local.y >= b.minY - 15 && local.y <= b.maxY + 15;
+  }
+    toJSON(): any {
+    return {
+      ...super.toJSON(),
+      x1: this.x1,
+      y1: this.y1,
+      x2: this.x2,
+      y2: this.y2,
+      x3: this.x3,
+      y3: this.y3,
+    };
   }
 }

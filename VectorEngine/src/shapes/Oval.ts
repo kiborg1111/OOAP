@@ -3,19 +3,42 @@ import { Bounds, Point } from '../core/types';
 import { RasterRenderer } from '../lib/raster/RasterRenderer';
 
 export class Oval extends Shape {
-  public radiusX: number = 90;
-  public radiusY: number = 60;
+  public x1: number;
+  public y1: number;
+  public x2: number;
+  public y2: number;
 
-  constructor(id?: string) {
+  constructor(x1: number = -80, y1: number = -60, x2: number = 80, y2: number = 60, id?: string) {
     super(id);
+    this.x1 = x1;
+    this.y1 = y1;
+    this.x2 = x2;
+    this.y2 = y2;
+    this.strokeWidth = 5;
+  }
+
+  get radiusX(): number {
+    return Math.abs(this.x2 - this.x1) / 2;
+  }
+
+  get radiusY(): number {
+    return Math.abs(this.y2 - this.y1) / 2;
+  }
+
+  get centerX(): number {
+    return (this.x1 + this.x2) / 2;
+  }
+
+  get centerY(): number {
+    return (this.y1 + this.y2) / 2;
   }
 
   getLocalBounds(): Bounds {
     return {
-      minX: -this.radiusX,
-      minY: -this.radiusY,
-      maxX: this.radiusX,
-      maxY: this.radiusY,
+      minX: this.x1,
+      minY: this.y1,
+      maxX: this.x2,
+      maxY: this.y2,
     };
   }
 
@@ -25,9 +48,10 @@ export class Oval extends Shape {
 
     for (let i = 0; i < segments; i++) {
       const angle = (i / segments) * Math.PI * 2;
-      const x = Math.cos(angle) * this.radiusX;
-      const y = Math.sin(angle) * this.radiusY;
-      points.push(this.transformPointToWorld(x, y));
+      const x = this.centerX + Math.cos(angle) * this.radiusX;
+      const y = this.centerY + Math.sin(angle) * this.radiusY;
+      const worldPoint = this.transformPointToWorld(x, y);
+      points.push(worldPoint);
     }
 
     const fillColor = { r: 59, g: 130, b: 246, a: Math.floor(this.fillOpacity * 255) };
@@ -41,8 +65,17 @@ export class Oval extends Shape {
 
   hitTest(screenX: number, screenY: number): boolean {
     const local = this.transformPointToLocal(screenX, screenY);
-    const dx = local.x / this.radiusX;
-    const dy = local.y / this.radiusY;
+    const dx = (local.x - this.centerX) / this.radiusX;
+    const dy = (local.y - this.centerY) / this.radiusY;
     return (dx * dx + dy * dy) <= 1;
+  }
+  toJSON(): any {
+    return {
+      ...super.toJSON(),
+      x1: this.x1,
+      y1: this.y1,
+      x2: this.x2,
+      y2: this.y2,
+    };
   }
 }

@@ -42,15 +42,24 @@ export abstract class Shape {
     return mat3.transformPoint(m, screenX, screenY);
   }
 
+  public getLocalPoint(screenX: number, screenY: number): Point {
+    return this.transformPointToLocal(screenX, screenY);
+  }
+
+  public getWorldPoint(localX: number, localY: number): Point {
+    return this.transformPointToWorld(localX, localY);
+  }
+
   getBounds(): Bounds {
     const local = this.getLocalBounds();
     const cx = this.transform.x;
     const cy = this.transform.y;
+
     return {
-      minX: cx - 200,
-      minY: cy - 200,
-      maxX: cx + 200,
-      maxY: cy + 200,
+      minX: cx + local.minX,
+      minY: cy + local.minY,
+      maxX: cx + local.maxX,
+      maxY: cy + local.maxY,
     };
   }
 
@@ -67,27 +76,30 @@ export abstract class Shape {
     this.transform.y = (minY + maxY) / 2;
   }
 
-  setBounds(minX: number, minY: number, maxX: number, maxY: number) {
-    this.resizeFromDeviceAABB(minX, minY, maxX, maxY);
-  }
-
-  getLocalToDeviceMatrix() {
-    return this.getLocalToWorldMatrix();
-  }
-
-  getDeviceToLocalMatrix() {
-    return this.getWorldToLocalMatrix();
-  }
-
-  transformPointToDevice(px: number, py: number): Point {
-    return this.transformPointToWorld(px, py);
-  }
-
   clone(): this {
     const cloned = Object.create(Object.getPrototypeOf(this)) as this;
     Object.assign(cloned, this);
     cloned.transform = this.transform.clone();
     cloned.id = `clone_${this.id}`;
     return cloned;
+  }
+    // Сериализация фигуры в JSON
+  toJSON(): any {
+    return {
+      type: this.constructor.name,
+      id: this.id,
+      transform: {
+        x: this.transform.x,
+        y: this.transform.y,
+        rotation: this.transform.rotation ?? 0,
+        scaleX: this.transform.scaleX ?? 1,
+        scaleY: this.transform.scaleY ?? 1,
+      },
+      fillStyle: this.fillStyle,
+      fillOpacity: this.fillOpacity,
+      strokeStyle: this.strokeStyle,
+      strokeWidth: this.strokeWidth,
+      strokeOpacity: this.strokeOpacity,
+    };
   }
 }

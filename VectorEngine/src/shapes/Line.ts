@@ -1,5 +1,5 @@
 import { Shape } from '../core/Shape';
-import { Bounds, Point } from '../core/types';
+import { Bounds } from '../core/types';
 import { RasterRenderer } from '../lib/raster/RasterRenderer';
 
 export class Line extends Shape {
@@ -41,5 +41,14 @@ export class Line extends Shape {
     const b = this.getLocalBounds();
     return local.x >= b.minX - 15 && local.x <= b.maxX + 15 &&
            local.y >= b.minY - 15 && local.y <= b.maxY + 15;
+  }
+  toJSON(): any {
+    return {
+      ...super.toJSON(),
+      х1: this.x1,
+      y1: this.y1,
+      x2: this.x2,
+      y2: this.y2,
+    };
   }
 }

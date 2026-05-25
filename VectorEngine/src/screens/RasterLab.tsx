@@ -95,18 +95,18 @@ export default function RasterLab() {
         <button
           onClick={() => window.history.back()}
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            backgroundColor: "#3b82f6",
-            color: "#ffffff",
-            border: "none",
-            padding: "8px 20px",
-            borderRadius: "8px",
-            fontSize: "14px",
-            fontWeight: "500",
-            cursor: "pointer",
-            transition: "all 0.2s",
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            backgroundColor: '#3b82f6',
+            color: '#ffffff',
+            border: 'none',
+            padding: '8px 20px',
+            borderRadius: '8px',
+            fontSize: '14px',
+            fontWeight: '500',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = "#2563eb";
@@ -160,7 +160,7 @@ export default function RasterLab() {
           style={{
             width: "100%",
             height: "100%",
-            backgroundColor: "#ffff",
+            backgroundColor: "#0f172a",
             display: "block",
           }}
         />
