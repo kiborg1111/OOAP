@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 import { RasterRenderer } from '../lib/raster/RasterRenderer';
 
 import { Shape } from '../core/Shape';
@@ -253,7 +253,7 @@ export default function RasterLab1() {
           e.currentTarget.style.transform = 'scale(1)';
         }}
       >
-        Сохранить в JSON
+        <Save size={22} />
       </button>
     </header>
 
