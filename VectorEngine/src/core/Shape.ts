@@ -20,6 +20,12 @@ export abstract class Shape {
   abstract getLocalBounds(): Bounds;
   abstract draw(renderer: RasterRenderer): void;
   abstract hitTest(screenX: number, screenY: number): boolean;
+  
+  abstract resizeFromBounds(minX: number, minY: number, maxX: number, maxY: number): void;
+
+  resizeFromDeviceAABB(minX: number, minY: number, maxX: number, maxY: number) {
+    this.resizeFromBounds(minX, minY, maxX, maxY);
+  }
 
   protected getLocalToWorldMatrix() {
     const { x, y, rotation, scaleX, scaleY } = this.transform;
@@ -71,9 +77,9 @@ export abstract class Shape {
     };
   }
 
-  resizeFromDeviceAABB(minX: number, minY: number, maxX: number, maxY: number) {
-    this.transform.x = (minX + maxX) / 2;
-    this.transform.y = (minY + maxY) / 2;
+  move(dx: number, dy: number) {
+    this.transform.x += dx;
+    this.transform.y += dy;
   }
 
   clone(): this {
@@ -83,7 +89,8 @@ export abstract class Shape {
     cloned.id = `clone_${this.id}`;
     return cloned;
   }
-    // Сериализация фигуры в JSON
+  
+  // Сериализация фигуры в JSON
   toJSON(): any {
     return {
       type: this.constructor.name,

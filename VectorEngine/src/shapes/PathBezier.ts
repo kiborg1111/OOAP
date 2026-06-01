@@ -100,4 +100,26 @@ export class PathBezier extends Shape {
     return local.x >= b.minX && local.x <= b.maxX &&
            local.y >= b.minY && local.y <= b.maxY;
   }
+
+  resizeFromBounds(minX: number, minY: number, maxX: number, maxY: number): void {
+    const newWidth = maxX - minX;
+    const newHeight = maxY - minY;
+    
+    if (newWidth > 10 && newHeight > 10 && this.points.length > 0) {
+      const currentBounds = this.getLocalBounds();
+      const currentWidth = currentBounds.maxX - currentBounds.minX;
+      const currentHeight = currentBounds.maxY - currentBounds.minY;
+      
+      const scaleX = newWidth / currentWidth;
+      const scaleY = newHeight / currentHeight;
+      
+      this.points = this.points.map(p => ({
+        x: p.x * scaleX,
+        y: p.y * scaleY
+      }));
+      
+      this.transform.x = (minX + maxX) / 2;
+      this.transform.y = (minY + maxY) / 2;
+    }
+  }
 }

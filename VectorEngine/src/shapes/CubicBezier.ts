@@ -48,6 +48,33 @@ export class CubicBezier extends Shape {
     return local.x >= b.minX - 25 && local.x <= b.maxX + 25 &&
            local.y >= b.minY - 25 && local.y <= b.maxY + 25;
   }
+
+  resizeFromBounds(minX: number, minY: number, maxX: number, maxY: number): void {
+    const newWidth = maxX - minX;
+    const newHeight = maxY - minY;
+    
+    if (newWidth > 10 && newHeight > 10) {
+      const currentBounds = this.getLocalBounds();
+      const currentWidth = currentBounds.maxX - currentBounds.minX;
+      const currentHeight = currentBounds.maxY - currentBounds.minY;
+      
+      const scaleX = newWidth / currentWidth;
+      const scaleY = newHeight / currentHeight;
+      
+      this.p0x = this.p0x * scaleX;
+      this.p0y = this.p0y * scaleY;
+      this.p1x = this.p1x * scaleX;
+      this.p1y = this.p1y * scaleY;
+      this.p2x = this.p2x * scaleX;
+      this.p2y = this.p2y * scaleY;
+      this.p3x = this.p3x * scaleX;
+      this.p3y = this.p3y * scaleY;
+      
+      this.transform.x = (minX + maxX) / 2;
+      this.transform.y = (minY + maxY) / 2;
+    }
+  }
+
   toJSON(): any {
     return {
       ...super.toJSON(),
@@ -57,6 +84,8 @@ export class CubicBezier extends Shape {
       p1y: this.p1y,
       p2x: this.p2x,
       p2y: this.p2y,
+      p3x: this.p3x,
+      p3y: this.p3y,
     };
   }
 }

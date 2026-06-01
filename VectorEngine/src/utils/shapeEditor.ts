@@ -2,7 +2,6 @@ import { Shape } from '../core/Shape';
 import { Point } from '../core/types';
 
 import { Triangle } from '../shapes/Triangle';
-import { Rect } from '../shapes/Rect';
 import { Bezier } from '../shapes/Bezier';
 import { CubicBezier } from '../shapes/CubicBezier';
 import { Line } from '../shapes/Line';
@@ -16,15 +15,6 @@ export const getShapePoints = (shape: Shape): Point[] => {
       { x: s.x1 ?? 0, y: s.y1 ?? 0 },
       { x: s.x2 ?? 0, y: s.y2 ?? 0 },
       { x: s.x3 ?? 0, y: s.y3 ?? 0 }
-    ];
-  }
-
-  if (s instanceof Rect) {
-    return [
-      { x: s.x1 ?? 0, y: s.y1 ?? 0 },
-      { x: s.x2 ?? 0, y: s.y2 ?? 0 },
-      { x: s.x3 ?? 0, y: s.y3 ?? 0 },
-      { x: s.x4 ?? 0, y: s.y4 ?? 0 }
     ];
   }
   
@@ -68,12 +58,6 @@ export const setShapePoint = (shape: Shape, index: number, localX: number, local
     if (index === 1) { s.x2 = localX; s.y2 = localY; }
     if (index === 2) { s.x3 = localX; s.y3 = localY; }
   }
-  else if (s instanceof Rect) {
-    if (index === 0) { s.x1 = localX; s.y1 = localY; }
-    if (index === 1) { s.x2 = localX; s.y2 = localY; }
-    if (index === 2) { s.x3 = localX; s.y3 = localY; }
-    if (index === 3) { s.x4 = localX; s.y4 = localY; }
-  } 
   else if (s instanceof Bezier) {
     if (index === 0) { s.p0x = localX; s.p0y = localY; }
     if (index === 1) { s.p1x = localX; s.p1y = localY; }

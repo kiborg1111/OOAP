@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft } from "lucide-react";
-import {
-  RasterRenderer,
-  LineAlg,
-} from "../lib/raster/RasterRenderer";
+import {RasterRenderer,LineAlg,} from "../lib/raster/RasterRenderer";
 
 export default function RasterLab() {
   const canvasRef = useRef<HTMLCanvasElement>(null);

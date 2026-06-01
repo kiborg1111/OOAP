@@ -42,10 +42,33 @@ export class Line extends Shape {
     return local.x >= b.minX - 15 && local.x <= b.maxX + 15 &&
            local.y >= b.minY - 15 && local.y <= b.maxY + 15;
   }
+
+  resizeFromBounds(minX: number, minY: number, maxX: number, maxY: number): void {
+    const newWidth = maxX - minX;
+    const newHeight = maxY - minY;
+    
+    if (newWidth > 5 && newHeight > 5) {
+      const currentBounds = this.getLocalBounds();
+      const currentWidth = currentBounds.maxX - currentBounds.minX;
+      const currentHeight = currentBounds.maxY - currentBounds.minY;
+      
+      const scaleX = newWidth / currentWidth;
+      const scaleY = newHeight / currentHeight;
+      
+      this.x1 = this.x1 * scaleX;
+      this.y1 = this.y1 * scaleY;
+      this.x2 = this.x2 * scaleX;
+      this.y2 = this.y2 * scaleY;
+      
+      this.transform.x = (minX + maxX) / 2;
+      this.transform.y = (minY + maxY) / 2;
+    }
+  }
+
   toJSON(): any {
     return {
       ...super.toJSON(),
-      х1: this.x1,
+      x1: this.x1,
       y1: this.y1,
       x2: this.x2,
       y2: this.y2,

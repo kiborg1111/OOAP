@@ -10,7 +10,7 @@ export class Triangle extends Shape {
   public x3: number;
   public y3: number;
 
-  constructor(x1 = -70, y1 = -65, x2 = 70, y2 = -65, x3 = 0, y3 = 75, id?: string) {
+  constructor(x1 = 70, y1 = 65, x2 = -70, y2 = 65, x3 = 0, y3 = -75, id?: string) {
     super(id);
     this.x1 = x1;
     this.y1 = y1;
@@ -58,7 +58,32 @@ export class Triangle extends Shape {
     return local.x >= b.minX - 15 && local.x <= b.maxX + 15 &&
            local.y >= b.minY - 15 && local.y <= b.maxY + 15;
   }
-    toJSON(): any {
+
+  resizeFromBounds(minX: number, minY: number, maxX: number, maxY: number): void {
+    const newWidth = maxX - minX;
+    const newHeight = maxY - minY;
+    
+    if (newWidth > 20 && newHeight > 20) {
+      const currentBounds = this.getLocalBounds();
+      const centerX = (currentBounds.minX + currentBounds.maxX) / 2;
+      const centerY = (currentBounds.minY + currentBounds.maxY) / 2;
+      
+      const scaleX = newWidth / (currentBounds.maxX - currentBounds.minX);
+      const scaleY = newHeight / (currentBounds.maxY - currentBounds.minY);
+      
+      this.x1 = (this.x1 - centerX) * scaleX + centerX;
+      this.y1 = (this.y1 - centerY) * scaleY + centerY;
+      this.x2 = (this.x2 - centerX) * scaleX + centerX;
+      this.y2 = (this.y2 - centerY) * scaleY + centerY;
+      this.x3 = (this.x3 - centerX) * scaleX + centerX;
+      this.y3 = (this.y3 - centerY) * scaleY + centerY;
+      
+      this.transform.x = (minX + maxX) / 2;
+      this.transform.y = (minY + maxY) / 2;
+    }
+  }
+
+  toJSON(): any {
     return {
       ...super.toJSON(),
       x1: this.x1,
