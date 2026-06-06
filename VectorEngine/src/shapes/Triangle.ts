@@ -62,36 +62,37 @@ export class Triangle extends Shape {
   resizeFromBounds(minX: number, minY: number, maxX: number, maxY: number): void {
     const newWidth = maxX - minX;
     const newHeight = maxY - minY;
-    
-    if (newWidth > 20 && newHeight > 20) {
+  
+    if (newWidth > 10 && newHeight > 10) {
       const currentBounds = this.getLocalBounds();
-      const centerX = (currentBounds.minX + currentBounds.maxX) / 2;
-      const centerY = (currentBounds.minY + currentBounds.maxY) / 2;
-      
-      const scaleX = newWidth / (currentBounds.maxX - currentBounds.minX);
-      const scaleY = newHeight / (currentBounds.maxY - currentBounds.minY);
-      
-      this.x1 = (this.x1 - centerX) * scaleX + centerX;
-      this.y1 = (this.y1 - centerY) * scaleY + centerY;
-      this.x2 = (this.x2 - centerX) * scaleX + centerX;
-      this.y2 = (this.y2 - centerY) * scaleY + centerY;
-      this.x3 = (this.x3 - centerX) * scaleX + centerX;
-      this.y3 = (this.y3 - centerY) * scaleY + centerY;
-      
+      const currentWidth = currentBounds.maxX - currentBounds.minX;
+      const currentHeight = currentBounds.maxY - currentBounds.minY;
+    
+      const scaleX = newWidth / currentWidth;
+      const scaleY = newHeight / currentHeight;
+    
+      this.x1 = this.x1 * scaleX;
+      this.y1 = this.y1 * scaleY;
+      this.x2 = this.x2 * scaleX;
+      this.y2 = this.y2 * scaleY;
+      this.x3 = this.x3 * scaleX;
+      this.y3 = this.y3 * scaleY;
+    
       this.transform.x = (minX + maxX) / 2;
       this.transform.y = (minY + maxY) / 2;
     }
   }
 
-  toJSON(): any {
-    return {
-      ...super.toJSON(),
-      x1: this.x1,
-      y1: this.y1,
-      x2: this.x2,
-      y2: this.y2,
-      x3: this.x3,
-      y3: this.y3,
-    };
-  }
+toJSON(): any {
+  return {
+    ...super.toJSON(),
+    type: 'Triangle',
+    x1: this.x1,
+    y1: this.y1,
+    x2: this.x2,
+    y2: this.y2,
+    x3: this.x3,
+    y3: this.y3,
+  };
+}
 }

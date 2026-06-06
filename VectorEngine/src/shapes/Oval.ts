@@ -49,12 +49,11 @@ export class Oval extends Shape {
     return (dx * dx + dy * dy) <= 1.05;
   }
 
-  // Новый метод для изменения размера
   resizeFromBounds(minX: number, minY: number, maxX: number, maxY: number): void {
     const newRadiusX = (maxX - minX) / 2;
     const newRadiusY = (maxY - minY) / 2;
     
-    if (newRadiusX > 5 && newRadiusY > 5) { 
+    if (newRadiusX > 5 && newRadiusY > 5) {
       this.radiusX = newRadiusX;
       this.radiusY = newRadiusY;
       this.transform.x = (minX + maxX) / 2;
@@ -65,6 +64,7 @@ export class Oval extends Shape {
   toJSON(): any {
     return {
       ...super.toJSON(),
+      type: 'Oval',
       radiusX: this.radiusX,
       radiusY: this.radiusY,
     };

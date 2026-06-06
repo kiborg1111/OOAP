@@ -10,6 +10,9 @@ import { Rect } from '../shapes/Rect';
 import { Oval } from '../shapes/Oval';
 import { Triangle as TriangleShape } from '../shapes/Triangle';
 
+import { saveProject, loadProject, ProjectData } from '../lib/projectStorage';
+import { shapeFromJSON } from '../utils/shapeFactory';
+
 export default function Editor() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -21,49 +24,10 @@ export default function Editor() {
   const shapesRef = useRef<Shape[]>([]);
   const [selectedShapeId, setSelectedShapeId] = useState<string | null>(null);
 
-  const saveAndGoHome = () => {
-  };
+  const CANVAS_WIDTH = 1200;
+  const CANVAS_HEIGHT = 755;
 
-  const addShape = (type: 'rect' | 'oval' | 'triangle') => {
-    let newShape: Shape;
-    const centerX = 600 + Math.random() * 200;
-    const centerY = 350 + Math.random() * 150;
-
-    switch (type) {
-      case 'rect': 
-        newShape = new Rect(160, 110); 
-        break;
-      case 'oval': 
-        newShape = new Oval(85, 60); 
-        break;
-      case 'triangle': 
-        newShape = new TriangleShape(); 
-        break;
-      default: 
-        return;
-    }
-
-    newShape.transform.x = centerX;
-    newShape.transform.y = centerY;
-    newShape.fillStyle = '#3b82f6';
-    newShape.fillOpacity = 0.8;
-    newShape.strokeStyle = '#1e40af';
-    newShape.strokeWidth = 3;
-    newShape.strokeOpacity = 1;
-
-    shapesRef.current.push(newShape);
-    interactionRef.current?.setSelected(newShape);
-    setSelectedShapeId(newShape.id);
-    draw();
-  };
-
-  const deleteSelectedShape = () => {
-    if (interactionRef.current?.deleteSelected()) {
-      setSelectedShapeId(null);
-      draw();
-    }
-  };
-
+  
   const rotatePoint = (x: number, y: number, centerX: number, centerY: number, angleDeg: number) => {
     const angleRad = (angleDeg * Math.PI) / 180;
     const dx = x - centerX;
@@ -88,6 +52,7 @@ export default function Editor() {
     renderer.fillPolygon(points, color);
   };
 
+  
   const draw = useCallback(() => {
     const renderer = rendererRef.current;
     if (!renderer) return;
@@ -136,6 +101,101 @@ export default function Editor() {
     renderer.commit();
   }, []);
 
+  
+  const addShape = (type: 'rect' | 'oval' | 'triangle') => {
+    let newShape: Shape;
+    const centerX = 100 + Math.random() * (CANVAS_WIDTH - 200);
+    const centerY = 100 + Math.random() * (CANVAS_HEIGHT - 200);
+
+    switch (type) {
+      case 'rect': 
+        newShape = new Rect(160, 110); 
+        break;
+      case 'oval': 
+        newShape = new Oval(85, 60); 
+        break;
+      case 'triangle': 
+        newShape = new TriangleShape(); 
+        break;
+      default: 
+        return;
+    }
+
+    newShape.transform.x = centerX;
+    newShape.transform.y = centerY;
+    newShape.fillStyle = '#3b82f6';
+    newShape.fillOpacity = 0.8;
+    newShape.strokeStyle = '#1e40af';
+    newShape.strokeWidth = 3;
+    newShape.strokeOpacity = 1;
+
+    shapesRef.current.push(newShape);
+    interactionRef.current?.setSelected(newShape);
+    setSelectedShapeId(newShape.id);
+    draw();
+  };
+
+  const deleteSelectedShape = () => {
+    if (interactionRef.current?.deleteSelected()) {
+      setSelectedShapeId(null);
+      draw();
+    }
+  };
+
+  
+  const handleSave = async () => {
+    console.log('Количество фигур:', shapesRef.current.length);
+    
+    try {
+      const projectId = id === 'new' ? Date.now().toString() : id!;
+      
+      const projectData: ProjectData = {
+        id: projectId,
+        name: `Проект ${projectId}`,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        shapes: shapesRef.current.map(shape => shape.toJSON())
+      };
+      
+      await saveProject(projectId, projectData);
+      console.log('Проект сохранен:', projectId);
+      
+      if (id === 'new') {
+        navigate(`/editor/${projectId}`);
+      }
+    } catch (error) {
+      console.error('Ошибка сохранения:', error);
+    }
+  };
+
+  const loadProjectData = useCallback(async (projectId: string) => {
+    
+    try {
+      const projectData = await loadProject(projectId);
+      console.log('Загруженные данные:', projectData);
+      
+      if (projectData && projectData.shapes) {
+        const shapes = projectData.shapes
+          .map((shapeData: any) => shapeFromJSON(shapeData))
+          .filter((shape: Shape | null): shape is Shape => shape !== null);
+        
+        console.log('Восстановлено фигур:', shapes.length);
+        shapesRef.current = shapes;
+        
+        if (rendererRef.current) {
+          interactionRef.current = new InteractionManager(shapesRef.current, draw);
+        }
+        
+        interactionRef.current?.setSelected(null);
+        setSelectedShapeId(null);
+        draw();
+        
+      }
+    } catch (error) {
+    }
+  }, [draw]);
+
+  
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -169,14 +229,20 @@ export default function Editor() {
   };
 
   useEffect(() => {
+    if (id && id !== 'new') {
+      loadProjectData(id);
+    }
+  }, [id, loadProjectData]);
+
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const dpr = window.devicePixelRatio || 1;
-    canvas.width = 1200 * dpr;
-    canvas.height = 780 * dpr;
-    canvas.style.width = '1200px';
-    canvas.style.height = '780px';
+    canvas.width = CANVAS_WIDTH * dpr;
+    canvas.height = CANVAS_HEIGHT * dpr;
+    canvas.style.width = `${CANVAS_WIDTH}px`;
+    canvas.style.height = `${CANVAS_HEIGHT}px`;
 
     rendererRef.current = new RasterRenderer(canvas);
     interactionRef.current = new InteractionManager(shapesRef.current, draw);
@@ -184,6 +250,7 @@ export default function Editor() {
     draw();
   }, [draw]);
 
+  
   return (
     <div style={{ 
       height: '100vh', 
@@ -318,7 +385,7 @@ export default function Editor() {
           <div style={{ width: '40px', height: '1px', backgroundColor: '#4a4a4a', margin: '8px 0' }}></div>
           
           <button
-            onClick={saveAndGoHome}
+            onClick={handleSave}
             style={{
               padding: '12px',
               backgroundColor: '#22c55e',
@@ -337,6 +404,7 @@ export default function Editor() {
               e.currentTarget.style.backgroundColor = '#22c55e';
               e.currentTarget.style.transform = 'scale(1)';
             }}
+            title="Сохранить проект"
           >
             <Save size={22} />
           </button>
@@ -355,7 +423,7 @@ export default function Editor() {
             boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
             width: '100%', 
             height: '100%', 
-            maxWidth: '1200px', 
+            maxWidth: `${CANVAS_WIDTH}px`, 
             maxHeight: '85vh',
             display: 'flex', 
             alignItems: 'center', 
@@ -370,8 +438,8 @@ export default function Editor() {
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
               style={{ 
-                width: '100%', 
-                height: '100%', 
+                width: `${CANVAS_WIDTH}px`,
+                height: `${CANVAS_HEIGHT}px`,
                 cursor: 'default',
                 borderRadius: '8px'
               }}

@@ -1,27 +1,42 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+// src/screens/Gallery.tsx
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Plus, FolderOpen, LayoutGrid, Clock, Shapes } from 'lucide-react';
-
-interface Project {
-  id: string;
-  name: string;
-  date: string;
-  thumbnail?: string;
-}
+import { loadProjectIndex, ProjectData } from '../lib/projectStorage';
 
 export default function Gallery() {
-  const [projects, setProjects] = useState<Project[]>([
-    { id: '1', name: 'Мой первый проект', date: '20.03.2026' },
-    { id: '2', name: 'Тестовый проект', date: '21.03.2026' },
-  ]);
+  const navigate = useNavigate();
+  const [projects, setProjects] = useState<ProjectData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const addProject = () => {
-    const newProject: Project = {
-      id: Date.now().toString(),
-      name: `Новый проект ${projects.length + 1}`,
-      date: new Date().toLocaleDateString('ru-RU'),
-    };
-    setProjects([...projects, newProject]);
+  const loadProjects = async () => {
+    setLoading(true);
+    try {
+      const projectList = await loadProjectIndex();
+      console.log('Загружено проектов:', projectList.length);
+      setProjects(projectList);
+    } catch (error) {
+      console.error('Ошибка загрузки проектов:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProjects();
+  }, []);
+
+  const createNewProject = () => {
+    navigate('/editor/new');
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
   };
 
   return (
@@ -114,7 +129,7 @@ export default function Gallery() {
           </Link>
 
           <button
-            onClick={addProject}
+            onClick={createNewProject}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -155,7 +170,15 @@ export default function Gallery() {
           </p>
         </div>
 
-        {projects.length > 0 ? (
+        {loading ? (
+          <div style={{
+            textAlign: 'center',
+            padding: '64px',
+            color: '#9ca3af'
+          }}>
+            Загрузка проектов...
+          </div>
+        ) : projects.length > 0 ? (
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
@@ -202,7 +225,7 @@ export default function Gallery() {
                     </h3>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                       <Clock size={14} color="#6b7280" />
-                      <span style={{ color: '#6b7280', fontSize: '12px' }}>{project.date}</span>
+                      <span style={{ color: '#6b7280', fontSize: '12px' }}>{formatDate(project.updatedAt)}</span>
                     </div>
                     <div style={{
                       color: '#3b82f6',
@@ -235,7 +258,7 @@ export default function Gallery() {
               Создайте первый проект чтобы начать работу
             </p>
             <button
-              onClick={addProject}
+              onClick={createNewProject}
               style={{
                 backgroundColor: '#3b82f6',
                 color: '#ffffff',

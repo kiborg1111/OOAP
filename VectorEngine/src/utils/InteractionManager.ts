@@ -127,7 +127,6 @@ export class InteractionManager {
       this.lastMousePos = { x, y };
     } 
     else if (this.dragType === 'rotate' && this.initialCenter) {
-      // Вычисляем угол поворота относительно центра фигуры
       const angle1 = Math.atan2(
         this.initialMousePos.y - this.initialCenter.y,
         this.initialMousePos.x - this.initialCenter.x

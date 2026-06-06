@@ -59,10 +59,11 @@ export class Rect extends Shape {
   }
 
   toJSON(): any {
-    return {
-      ...super.toJSON(),
-      width: this.width,
-      height: this.height,
-    };
-  }
+  return {
+    ...super.toJSON(),
+    type: 'Rect',
+    width: this.width,
+    height: this.height,
+  };
+}
 }
